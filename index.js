@@ -61,7 +61,7 @@ var ejs = require('ejs')
  */
 
 var renderFile = module.exports = function(file, options, fn){
-
+  
   // Express used to set options.locals for us, but now we do it ourselves
   // (EJS does some __proto__ magic to expose these funcs/values in the template)
   if (!options.locals) {
@@ -81,8 +81,16 @@ var renderFile = module.exports = function(file, options, fn){
   // override locals for layout/partial bound to current options
   options.locals.layout  = layout.bind(options);
   options.locals.partial = partial.bind(options);
+  
+  if(typeof file === 'object') {
+    var source = file.contents.toString();
+    file = file.path;
+    renderCb(null, ejs.render(source, options) );
+  } else {
+    ejs.renderFile(file, renderCb);
+  }
 
-  ejs.renderFile(file, options, function(err, html) {
+  function renderCb(err, html) {
 
     if (err) {
       return fn(err,html);
@@ -133,7 +141,7 @@ var renderFile = module.exports = function(file, options, fn){
       // no layout, just do the default:
       fn(null, html);
     }
-  });
+  };
 
 };
 
