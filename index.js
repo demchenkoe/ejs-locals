@@ -87,7 +87,7 @@ var renderFile = module.exports = function(file, options, fn){
     file = file.path;
     renderCb(null, ejs.render(source, options) );
   } else {
-    ejs.renderFile(file, renderCb);
+    ejs.renderFile(file, options, renderCb);
   }
 
   function renderCb(err, html) {
